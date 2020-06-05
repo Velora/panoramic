@@ -7,6 +7,11 @@ module Panoramic
     def find_templates(name, prefix, partial, details, key=nil, locals=[])
       return [] if @@resolver_options[:only] && !@@resolver_options[:only].include?(prefix)
 
+      # Ensure that we are on the correct tenant before finding template
+      if @@resolver_options[:tenant].present?
+        Apartment::Tenant.switch!(@@resolver_options[:tenant])
+      end
+
       path = build_path(name, prefix)
       conditions = {
         :path    => path,

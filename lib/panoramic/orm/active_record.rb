@@ -17,6 +17,7 @@ module Panoramic
 
       module ClassMethods
         def find_model_templates(conditions = {})
+          Rails.logger.info("PanoramicTenant: #{Apartment::Tenant.current}")
           self.where(conditions)
         end
 
