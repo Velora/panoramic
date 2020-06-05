@@ -26,6 +26,7 @@ module Panoramic
     def self.using(model, options={})
       @@model = model
       @@resolver_options = options
+      self.caching = false
       self.instance
     end
 

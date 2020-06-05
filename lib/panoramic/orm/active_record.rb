@@ -9,7 +9,7 @@ module Panoramic
           validates :locale,  :inclusion => I18n.available_locales.map(&:to_s), :allow_blank => true
           validates :handler, :inclusion => ActionView::Template::Handlers.extensions.map(&:to_s)
 
-          after_save { Panoramic::Resolver.instance.clear_cache }
+          # after_save { Panoramic::Resolver.instance.clear_cache }
 
           extend ClassMethods
         end
