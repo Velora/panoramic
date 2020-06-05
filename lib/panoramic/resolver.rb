@@ -7,11 +7,6 @@ module Panoramic
     def find_templates(name, prefix, partial, details, key=nil, locals=[])
       return [] if @@resolver_options[:only] && !@@resolver_options[:only].include?(prefix)
 
-      # Ensure that we are on the correct tenant before finding template
-      if @@resolver_options[:tenant].present?
-        Apartment::Tenant.switch!(@@resolver_options[:tenant])
-      end
-
       path = build_path(name, prefix)
       conditions = {
         :path    => path,
@@ -44,7 +39,7 @@ module Panoramic
 
       details = {
         :format => Mime[record.format].to_sym,
-        :updated_at => record.updated_at,
+        :updated_at => Time.now, # this avoids template cache for apartment gem tenants
         :virtual_path => virtual_path(record.path, record.partial)
       }
 
