@@ -22,6 +22,20 @@ module Panoramic
       end
     end
 
+    # Overide Rails actionview/lib/action_view/template/resolver.rb so we don't check cache
+    # because we want to always read from database due to our multi-instance and multi tenant setup
+    def cached(key, path_info, details, locals)
+      name, prefix, partial = path_info
+
+      if key
+        # @cache.cache(key, name, prefix, partial, locals) do
+          yield
+        # end
+      else
+        yield
+      end
+    end
+
     # Instantiate Resolver by passing a model (decoupled from ORMs)
     def self.using(model, options={})
       @@model = model
