@@ -1,8 +1,7 @@
 module Panoramic
   class Resolver < ActionView::Resolver
-    # We want to allow multiple resolvers
-    # require "singleton"
-    # include Singleton
+    require "singleton"
+    include Singleton
 
     # this method is mandatory to implement a Resolver
     def find_templates(name, prefix, partial, details, key=nil, locals=[])
