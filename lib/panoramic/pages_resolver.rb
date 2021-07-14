@@ -1,5 +1,5 @@
-module PanoramicPages
-  class Resolver < ActionView::Resolver
+module Panoramic
+  class PagesResolver < ActionView::Resolver
     require "singleton"
     include Singleton
 
@@ -16,7 +16,7 @@ module PanoramicPages
         :partial => partial || false
       }.merge(details[:additional_criteria].presence || {})
 
-      @@model.find_model_templates(conditions).map do |record|
+      @@model.find_model_page_templates(conditions).map do |record|
         Rails.logger.debug "Rendering web page template from database: #{path} (#{record.format})"
         initialize_template(record)
       end
