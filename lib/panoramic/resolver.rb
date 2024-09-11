@@ -7,7 +7,8 @@ module Panoramic
     def find_templates(name, prefix, partial, details, key=nil, locals=[])
       return [] if @@resolver_options[:only] && !@@resolver_options[:only].include?(prefix)
 
-      path = build_path(name, prefix)
+      path = @@resolver_options[:path].present? ? @@resolver_options[:path] : build_path(name, prefix)
+
       conditions = {
         :path    => path,
         :locale  => [normalize_array(details[:locale]).first, nil],
@@ -16,7 +17,7 @@ module Panoramic
         :partial => partial || false
       }.merge(details[:additional_criteria].presence || {})
 
-      @@model.find_model_templates(conditions).map do |record|
+      @@model.find_model_templates(conditions)&.map do |record|
         Rails.logger.debug "Rendering email template from database: #{path} (#{record.format})"
         initialize_template(record)
       end
@@ -52,13 +53,12 @@ module Panoramic
       identifier = "#{record.class} - #{record.id} - #{record.path.inspect}"
       handler = ActionView::Template.registered_template_handler(record.handler)
 
-      details = {
-        :format => Mime[record.format].to_sym,
-        :updated_at => Time.now, # this avoids template cache for apartment gem tenants
-        :virtual_path => virtual_path(record.path, record.partial)
-      }
 
-      ActionView::Template.new(source, identifier, handler, details)
+      ActionView::Template.new(source, identifier, handler,
+                               :locals => [],
+                               :format => Mime[record.format].to_sym,
+                               :virtual_path => virtual_path(record.path, record.partial))
+
     end
 
     # Build path with eventual prefix
